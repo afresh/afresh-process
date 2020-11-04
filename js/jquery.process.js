@@ -1,21 +1,14 @@
 /*
- * jQuery OrgProc Plugin
- * https://github.com/dabeng/OrgProc
+ * jQuery Approval Process Plugin
+ * https://github.com/afresh/afresh-process.git
  *
- * Demos of jQuery OrgProc Plugin
- * http://dabeng.github.io/OrgProc/local-datasource/
- * http://dabeng.github.io/OrgProc/ajax-datasource/
- * http://dabeng.github.io/OrgProc/ondemand-loading-data/
- * http://dabeng.github.io/OrgProc/option-createNode/
- * http://dabeng.github.io/OrgProc/export-proc/
- * http://dabeng.github.io/OrgProc/integrate-map/
- *
- * Copyright 2016, dabeng
- * http://dabeng.github.io/
+ * Copyright 2020, Afresh
+ * https://github.com/afresh
  *
  * Licensed under the MIT license:
- * http://www.opensource.org/licenses/MIT
+ * https://github.com/afresh/afresh-process/blob/main/LICENSE
  */
+
 'use strict';
 
 (function (factory) {
@@ -29,16 +22,6 @@
     var defaultOptions = {
       'nodeTitle': 'name',
       'nodeId': 'id',
-      'nodeChildren': 'children',
-      'toggleSiblingsResp': false,
-      'depth': 999,
-      'procClass': '',
-      'exportButton': false,
-      'exportFilename': 'OrgProc',
-      'parentNodeSymbol': 'fa-users',
-      'draggable': false,
-      'direction': 't2b',
-      'pan': false,
       'zoom': 1.0
     };
 
@@ -59,7 +42,7 @@
       }
 
       $procContainer.empty();
-      
+
       var $zoomIn = $('<div class="zoom-in"></div>');
       var $zoomOut = $('<div class="zoom-out"></div>');
       var $zoom = $('<div class="zoom"></div>');
@@ -108,8 +91,8 @@
   };
 
   function renderProcess($procContainer, processData, opts) {
-    console.log('flow re-render')
-    console.log(processData)
+    console.log('flow re-render');
+    console.log(processData);
 
     var $proc = $('<div></div>', {
       'data': { 'options': opts },
@@ -120,8 +103,8 @@
     var $boxScale = $('<div class="box-scale" id="box-scale" style="transform: scale(' + opts.zoom + '); transform-origin: 50% 0px 0px;"></div>');
     $proc.append($boxScale);
 
-    renderNode($boxScale, processData, opts)
-    renderEndNode($boxScale, opts)
+    renderNode($boxScale, processData, opts);
+    renderEndNode($boxScale, opts);
   }
 
   function renderNode($parentNode, nodeData, opts) {
@@ -139,7 +122,7 @@
       event.stopPropagation();
       $('.node-wrap-box').removeClass('active');
       $nodeBox.addClass('active');
-  });
+    });
 
     var $title = $('<div class="title"></div>');
     $div.append($title);
@@ -204,7 +187,19 @@
     }
     $content.append('<i aria-label="icon: right" class="anticon anticon-right arrow"><svg viewBox="64 64 896 896" focusable="false" class="" data-icon="right" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 0 0 302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 0 0 0-50.4z"></path></svg></i>');
 
-    renderAddBtn($node, nodeData, opts)
+    $closeIcon.on('click', function (event) {
+      event.stopPropagation();
+      var tempChildNode = nodeData.childNode;
+      if (tempChildNode) {
+        tempChildNode.prevId = nodeData.prevId;
+        updateParentNode(opts.data, tempChildNode);
+      } else {
+        updateParentNode(opts.data, nodeData.prevId);
+      }
+      opts.reRender();
+    });
+
+    renderAddBtn($node, nodeData, opts);
 
     if (nodeData.childNode) {
       if (nodeData.childNode.type === 'route') {
@@ -225,7 +220,7 @@
     var $addRouteBtn = $('<button class="add-branch">添加条件</button>');
     $branchBox.append($addRouteBtn);
 
-    $addRouteBtn.on('click', opts.onAddRoute ? opts.onAddRoute : function() {
+    $addRouteBtn.on('click', opts.onAddRoute ? opts.onAddRoute : function () {
       console.log('onAddRoute', nodeData.nodeId);
       nodeData.conditionNodes.push({
         "name": "条件" + (nodeData.conditionNodes.length + 1),
@@ -265,7 +260,7 @@
         $sortLeft.on('click', function (event) {
           event.stopPropagation();
           var tempNode = nodeData.conditionNodes[index - 1];
-          nodeData.conditionNodes.splice(index - 1, 1 , nodeData.conditionNodes[index]);
+          nodeData.conditionNodes.splice(index - 1, 1, nodeData.conditionNodes[index]);
           nodeData.conditionNodes.splice(index, 1, tempNode);
           opts.reRender();
         });
@@ -285,13 +280,13 @@
         $sortRight.on('click', function (event) {
           event.stopPropagation();
           var tempNode = nodeData.conditionNodes[index + 1];
-          nodeData.conditionNodes.splice(index + 1, 1 , nodeData.conditionNodes[index]);
+          nodeData.conditionNodes.splice(index + 1, 1, nodeData.conditionNodes[index]);
           nodeData.conditionNodes.splice(index, 1, tempNode);
           opts.reRender();
         });
       }
 
-      renderAddBtn($conditionNodeBox, node, opts)
+      renderAddBtn($conditionNodeBox, node, opts);
 
       if (node.childNode) {
         if (node.childNode.type === 'route') {
@@ -300,7 +295,7 @@
           renderNode($node, node.childNode, opts);
         }
       }
-      
+
       $copyBtn.on('click', function (event) {
         event.stopPropagation();
         var copyNode = $.extend(true, {}, node);
@@ -309,7 +304,7 @@
         nodeData.conditionNodes.splice(index + 1, 0, copyNode);
         opts.reRender();
       });
-      
+
       $closeBtn.on('click', function (event) {
         event.stopPropagation();
         nodeData.conditionNodes.splice(index, 1);
@@ -336,7 +331,7 @@
       });
     });
 
-    renderAddBtn($branchBoxWrap, nodeData, opts)
+    renderAddBtn($branchBoxWrap, nodeData, opts);
 
     if (nodeData.childNode) {
       if (nodeData.childNode.type === 'route') {
@@ -356,7 +351,7 @@
     $parentNode.append($addNode);
     var $addBtn = $('<button class="btn" type="button"><span class="iconfont"></span></button>');
     $addNode.append($addBtn);
-    $addBtn.on('click', function(event) {
+    $addBtn.on('click', function (event) {
       if ($('#pop_' + nodeData.nodeId).css('display') === 'none') {
         setTimeout(() => {
           $('#pop_' + nodeData.nodeId).show();
@@ -373,22 +368,22 @@
         setTimeout(() => {
           $(event.target).closest($('div.dingflow-design')).append($popContainer);
         }, 100);
-        $approver.on('click', opts.onAddApprover ? opts.onAddApprover : function() {
+        $approver.on('click', opts.onAddApprover ? opts.onAddApprover : function () {
           console.log('onAddApprover', nodeData.nodeId);
           addNode(nodeData, nodeData.nodeId, 'approver');
           opts.reRender();
         });
-        $notifier.on('click', opts.onAddNotifier ? opts.onAddNotifier : function() {
+        $notifier.on('click', opts.onAddNotifier ? opts.onAddNotifier : function () {
           console.log('onAddNotifier', nodeData.nodeId);
           addNode(nodeData, nodeData.nodeId, 'notifier');
           opts.reRender();
         });
-        $audit.on('click', opts.onAddAudit ? opts.onAddAudit : function() {
+        $audit.on('click', opts.onAddAudit ? opts.onAddAudit : function () {
           console.log('onAddAudit', nodeData.nodeId);
           addNode(nodeData, nodeData.nodeId, 'audit');
           opts.reRender();
         });
-        $route.on('click', opts.onAddRoute ? opts.onAddRoute : function() {
+        $route.on('click', opts.onAddRoute ? opts.onAddRoute : function () {
           console.log('onAddRoute', nodeData.nodeId);
           addNode(nodeData, nodeData.nodeId, 'route');
           opts.reRender();
@@ -572,7 +567,7 @@
         if (nodeData.conditionNodes) {
           nodeData.conditionNodes.forEach((conditionNode) => {
             updateParentNode(conditionNode, node);
-          })
+          });
         }
         if (nodeData.childNode) {
           updateParentNode(nodeData.childNode, node);
@@ -585,7 +580,7 @@
         if (nodeData.conditionNodes) {
           nodeData.conditionNodes.forEach((conditionNode) => {
             updateParentNode(conditionNode, node);
-          })
+          });
         }
         if (nodeData.childNode) {
           updateParentNode(nodeData.childNode, node);
@@ -599,7 +594,7 @@
     if (node.conditionNodes) {
       node.conditionNodes.forEach((conditionNode) => {
         updateNodeId(conditionNode);
-      })
+      });
     }
     if (node.childNode) {
       updateNodeId(node.childNode);
@@ -613,7 +608,7 @@
       if (i === 4) {
         id += '_';
       }
-      id += sign[Math.floor(Math.random()*36)];
+      id += sign[Math.floor(Math.random() * 36)];
     }
     return id;
   }
