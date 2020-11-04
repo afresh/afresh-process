@@ -352,16 +352,24 @@
     var $addBtn = $('<button class="btn" type="button"><span class="iconfont"></span></button>');
     $addNode.append($addBtn);
     $addBtn.on('click', function (event) {
-      if ($('#pop_' + nodeData.nodeId).css('display') === 'none') {
+      var popoverClass = 'ant-popover-placement-rightTop';
+      var left = $(this).offset().left - $('#box-scale').offset().left + 40;
+      var top = $(this).offset().top - $('#box-scale').offset().top;
+      if (368 + left >= $('#box-scale').width()) {
+        popoverClass = 'ant-popover-placement-leftTop';
+        left = $(this).offset().left - $('#box-scale').offset().left - 378;
+      }
+      if ($('#pop_' + nodeData.nodeId).length > 0) {
         setTimeout(() => {
           $('#pop_' + nodeData.nodeId).show();
+          $('#pop_' + nodeData.nodeId).find('.ant-popover').removeClass('ant-popover-placement-leftTop').removeClass('ant-popover-placement-rightTop').addClass(popoverClass).css('left', left).css('top', top);
         }, 100);
       } else {
         var $approver = $('<a class="add-node-popover-item approver"><div class="item-wrapper"><span class="iconfont"></span></div><span>审批人</span></a>');
         var $notifier = $('<a class="add-node-popover-item notifier"><div class="item-wrapper"><span class="iconfont"></span></div><span>抄送人</span></a>');
         var $audit = $('<a class="add-node-popover-item audit"><div class="item-wrapper"><svg class="svg-icon" viewBox="0 0 1024 1024" width="1em" height="1em"><defs><style>@font-face{font-family:element-icons;src:url(chrome-extension://moombeodfomdpjnpocobemoiaemednkg/fonts/element-icons.woff) format(&amp;quot;woff&amp;quot;),url(&amp;quot;chrome-extension://moombeodfomdpjnpocobemoiaemednkg/fonts/element-icons.ttf &amp;quot;) format(&amp;quot;truetype&amp;quot;)}</style></defs><path d="M746.667 85.333a128 128 0 01128 128v140.8L576.555 652.31a20.373 20.373 0 00-2.134 26.283l2.134 2.517 43.2 43.2a20.373 20.373 0 0026.282 2.134l2.518-2.134 226.112-226.176v312.534a128 128 0 01-128 128H277.333a128 128 0 01-128-128V213.333a128 128 0 01128-128h469.334zM545.856 696.747a20.373 20.373 0 00-24.981 8.362l-38.784 75.862a10.176 10.176 0 0010.965 13.866l2.261-.64 93.27-16.917a20.373 20.373 0 008.96-30.784l-2.134-2.539-42.709-42.709a20.373 20.373 0 00-6.827-4.523zm-93.013-225.494H332.608a40.747 40.747 0 00-4.16 81.28l4.16.214h120.235a40.747 40.747 0 004.16-81.28l-4.16-.214zM615.765 349.1H332.587a40.747 40.747 0 00-4.16 81.237l4.16.213h283.157a40.747 40.747 0 004.16-81.258l-4.16-.214zm0-122.198H332.587a40.747 40.747 0 00-4.16 81.259l4.16.213h283.157a40.747 40.747 0 004.16-81.258l-4.16-.214z" fill="#FB602D"></path></svg></div><span>办理</span></a>');
         var $route = $('<a class="add-node-popover-item route"><div class="item-wrapper"><span class="iconfont"></span></div><span>条件分支</span></a>');
-        var $popover = $('<div class="ant-popover add-node-wrapper ant-popover-placement-rightTop" style="left: ' + ($(this).offset().left + 40) + 'px; top: ' + $(this).offset().top + 'px; transform-origin: -4px 0px;"><div class="ant-popover-content"><div class="ant-popover-arrow"></div><div class="ant-popover-inner" role="tooltip"><div><div class="ant-popover-inner-content"><div class="add-node-popover"><div class="add-node-popover-body"></div></div></div></div></div></div></div>');
+        var $popover = $('<div class="ant-popover add-node-wrapper ' + popoverClass + '" style="left: ' + left + 'px; top: ' + top + 'px; transform-origin: -4px 0px;"><div class="ant-popover-content"><div class="ant-popover-arrow"></div><div class="ant-popover-inner" role="tooltip"><div><div class="ant-popover-inner-content"><div class="add-node-popover"><div class="add-node-popover-body"></div></div></div></div></div></div></div>');
         $popover.find('div.add-node-popover-body').append($approver).append($notifier).append($audit).append($route);
         var $popContainer = $('<div id="pop_' + nodeData.nodeId + '" style="position: absolute; top: 0px; left: 0px; width: 100%;"><div>');
         $popContainer.children('div').append($popover);
