@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Afresh Process</title>
+  <link href="css/antd-3.25.3.min.css" rel="stylesheet">
+  <link href="css/jquery.process.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="procContainerId"></div>
+  <script src="js/jquery-1.12.4.min.js"></script>
+  <script src="js/jquery.process.js"></script>
+  <script>
+    var datascource = {
+      "childNode": {
+        "type": "route",
+        "prevId": "sid-startevent",
+        "nodeId": "ccd2_a04e",
+        "conditionNodes": [{
+          "name": "条件1",
+          "type": "condition",
+          "prevId": "ccd2_a04e",
+          "nodeId": "aabf_31b9",
+          "properties": {
+            "conditions": []
+          },
+          "childNode": {
+            "childNode": {
+              "name": "UNKNOWN",
+              "nodeId": "xsMt_Wn3S",
+              "prevId": "i1Hy_ftUf",
+              "properties": {
+                "actionerRules": [{
+                  "select": ["allStaff"],
+                  "isEmpty": false,
+                  "range": {
+                    "approvals": [],
+                    "labels": []
+                  },
+                  "type": "target_select",
+                  "key": "manual_u6I1_GWPI",
+                  "multi": 1
+                }]
+              },
+              "type": "notifier"
+            },
+            "name": "UNKNOWN",
+            "nodeId": "i1Hy_ftUf",
+            "prevId": "aabf_31b9",
+            "properties": {
+              "actionerRules": [{
+                "select": ["allStaff"],
+                "isEmpty": false,
+                "range": {
+                  "approvals": [],
+                  "labels": []
+                },
+                "type": "target_select",
+                "key": "manual_y9qM_IDQ9",
+                "multi": 1
+              }],
+              "activateType": "ONE_BY_ONE",
+              "agreeAll": "false"
+            },
+            "type": "approver"
+          }
+        }, {
+          "name": "条件2",
+          "type": "condition",
+          "prevId": "ccd2_a04e",
+          "nodeId": "fbe4_6c99",
+          "properties": {
+            "conditions": []
+          }
+        }, {
+          "name": "条件3",
+          "type": "condition",
+          "prevId": "ccd2_a04e",
+          "nodeId": "6825_11d2",
+          "properties": {
+            "conditions": []
+          }
+        }],
+        "properties": {}
+      },
+      "name": "提交人",
+      "nodeId": "sid-startevent",
+      "type": "start"
+    };
+    var options = {
+      'data': datascource,
+    };
+    var pc = $('#procContainerId').proc(options);
+    var opts = $('#procContainerId').proc('getValue');
+    console.log('opts', opts);
+  </script>
+</body>
+
+</html>
